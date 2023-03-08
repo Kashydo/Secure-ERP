@@ -16,12 +16,12 @@ def print_menu(title, list_options):
 
 def print_message(message):
     print(message)
-    # """Prints a single message to the terminal.
+    # # """Prints a single message to the terminal.
 
-    # Args:
-    #     message: str - the message
-    # """
-    pass
+    # # Args:
+    # #     message: str - the message
+    # # """
+    # pass
 
 
 def print_general_results(result, label):
@@ -50,9 +50,8 @@ def print_table(table):
 
 
 def get_input(label):
-    print(label)
     user_input = input(f"Prosze podac {label}: ")
-    return label
+    return user_input
     # """Gets single string input from the user.
 
     # Args:
@@ -62,10 +61,10 @@ def get_input(label):
 
 
 def get_inputs(labels):
-    user_input = [None]
+    user_inputs = []
     for label in labels:
-        user_input.append(input(f"Proszę podać {label}: "))
-    return user_input
+        user_inputs.append(input(f"Proszę podać {label}: "))
+    return user_inputs
 
 
 # """Gets a list of string inputs from the user.
@@ -77,9 +76,10 @@ def get_inputs(labels):
 
 
 def print_error_message(message):
-    """Prints an error message to the terminal.
+    print(message)
+    # """Prints an error message to the terminal.
 
-    Args:
-        message: str - the error message
-    """
-    pass
+    # Args:
+    # #     message: str - the error message
+    # # """
+    # # pass

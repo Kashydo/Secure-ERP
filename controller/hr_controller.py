@@ -1,13 +1,56 @@
-from model.hr import hr
+from model import util
+from model.hr import hr as hr
 from view import terminal as view
+import datetime
+ID = 0
+NAME = 1
+BIRTH_DAY = 2
+DEPARTAMENT = 3
+CLERANCE = 4
+data_format = '%Y-%m-%d'
+
+# sends to model to open list of employees
+# sends information to view to print
 
 
 def list_employees():
+
     view.print_error_message("Not implemented yet.")
 
 
-def add_employee():
-    view.print_error_message("Not implemented yet.")
+def add_employee(employee=['imię i nazwisko', 'data urodzenia (YYYY-MM-DD)',
+                           'departament', 'poziom dostepu']):
+
+    EMPLOYEE = view.get_inputs(employee)
+    EMPLOYEE.insert(0, 'ID')
+    date = False
+    while EMPLOYEE[NAME].replace(' ', '').isalpha() == False:
+        view.print_error_message('Podane imie jest nie prawidłowe')
+        EMPLOYEE[NAME] = view.get_input('imię i nazwisko')
+    EMPLOYEE[NAME] = EMPLOYEE[NAME].title()
+    while date == False:
+        try:
+            datetime.datetime.strptime(EMPLOYEE[BIRTH_DAY], data_format)
+        except:
+            view.print_error_message('Podane data jest nieprawidłowa')
+            EMPLOYEE[BIRTH_DAY] = view.get_input('datę urodzenia YYYY-MM-DD')
+        date = True
+    while 7 < int(EMPLOYEE[CLERANCE]) or int(EMPLOYEE[CLERANCE]) < 0:
+        view.print_error_message('Podany poziom dostępu jest nieprawidłowy')
+        EMPLOYEE[CLERANCE] = view.get_input('poziom dostępu')
+    employee_to_add = [EMPLOYEE[NAME], EMPLOYEE[BIRTH_DAY],
+                       EMPLOYEE[DEPARTAMENT], EMPLOYEE[CLERANCE]]
+    if hr.check_if_emloyee_is_in_data(';'.join(employee_to_add)):
+        view.print_error_message(
+            'Pracownik odpowiadający tym danym już jest w bazie')
+    else:
+        EMPLOYEE[ID] = util.generate_id()
+        hr.add_emplyee_to_data(';'.join(EMPLOYEE))
+
+    # view.print_error_message("Not implemented yet.")
+
+
+add_employee()
 
 
 def update_employee():

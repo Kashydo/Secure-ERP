@@ -12,3 +12,16 @@ from model import data_manager, util
 
 DATAFILE = "model/hr/hr.csv"
 HEADERS = ["Id", "Name", "Date of birth", "Department", "Clearance"]
+
+
+def add_emplyee_to_data(employee_data, file=DATAFILE):
+    with open(file, "a+") as emplpyee_list:
+        emplpyee_list.write(employee_data)
+
+
+def check_if_emloyee_is_in_data(employee_data, file=DATAFILE):
+    with open(file, "r") as employee_list:
+        if employee_data in employee_list.read():
+            return True
+        else:
+            return False
