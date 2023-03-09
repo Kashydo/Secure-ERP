@@ -7,15 +7,49 @@ NAME = 1
 BIRTH_DAY = 2
 DEPARTAMENT = 3
 CLERANCE = 4
-data_format = '%Y-%m-%d'
 
 # sends to model to open list of employees
 # sends information to view to print
 
 
 def list_employees():
+    list_of_employees = hr.get_list_of_employees()
+    view.print_table(list_of_employees)
 
-    view.print_error_message("Not implemented yet.")
+
+list_employees()
+
+
+def check_if_name_correct(name):
+    return name.replace(' ', '').isalpha()
+
+
+def check_if_date_correct(date, data_format='%Y-%m-%d'):
+    try:
+        datetime.datetime.strptime(date, data_format)
+    except:
+        return False
+    return True
+
+
+def check_if_clerance_correct(clerance, start=0, finish=7):
+    try:
+        int(clerance)
+    except:
+        return False
+    if start <= int(clerance) <= finish:
+        return True
+    else:
+        return False
+
+
+def check_if_employee_data_corect(data, partametrs_to_check=[NAME, BIRTH_DAY, CLERANCE], messeges=['imie i nazwisko', 'data urodzenia', 'poziom dostepu'], functions_list=[check_if_name_correct, check_if_date_correct, check_if_clerance_correct]):
+    for function, parametr, messege in zip(functions_list, partametrs_to_check, messeges):
+        while function(data[parametr]) == False:
+            view.print_error_message(
+                f'Podane dane " {messege} " są nie prawidłowe')
+            data[parametr] = view.get_input(messege)
+    return data
 
 
 def add_employee(employee=['imię i nazwisko', 'data urodzenia (YYYY-MM-DD)',
@@ -23,21 +57,7 @@ def add_employee(employee=['imię i nazwisko', 'data urodzenia (YYYY-MM-DD)',
 
     EMPLOYEE = view.get_inputs(employee)
     EMPLOYEE.insert(0, 'ID')
-    date = False
-    while EMPLOYEE[NAME].replace(' ', '').isalpha() == False:
-        view.print_error_message('Podane imie jest nie prawidłowe')
-        EMPLOYEE[NAME] = view.get_input('imię i nazwisko')
-    EMPLOYEE[NAME] = EMPLOYEE[NAME].title()
-    while date == False:
-        try:
-            datetime.datetime.strptime(EMPLOYEE[BIRTH_DAY], data_format)
-        except:
-            view.print_error_message('Podane data jest nieprawidłowa')
-            EMPLOYEE[BIRTH_DAY] = view.get_input('datę urodzenia YYYY-MM-DD')
-        date = True
-    while 7 < int(EMPLOYEE[CLERANCE]) or int(EMPLOYEE[CLERANCE]) < 0:
-        view.print_error_message('Podany poziom dostępu jest nieprawidłowy')
-        EMPLOYEE[CLERANCE] = view.get_input('poziom dostępu')
+    check_if_employee_data_corect(EMPLOYEE)
     employee_to_add = [EMPLOYEE[NAME], EMPLOYEE[BIRTH_DAY],
                        EMPLOYEE[DEPARTAMENT], EMPLOYEE[CLERANCE]]
     if hr.check_if_emloyee_is_in_data(';'.join(employee_to_add)):
@@ -46,11 +66,8 @@ def add_employee(employee=['imię i nazwisko', 'data urodzenia (YYYY-MM-DD)',
     else:
         EMPLOYEE[ID] = util.generate_id()
         hr.add_emplyee_to_data(';'.join(EMPLOYEE))
-
-    # view.print_error_message("Not implemented yet.")
-
-
-add_employee()
+        view.print_message(
+            f'Pracownik {EMPLOYEE} został dodany do bazy danych')
 
 
 def update_employee():
