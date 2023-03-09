@@ -15,18 +15,20 @@ def print_menu(title, list_options):
 
 
 def print_message(message):
-    """Prints a single message to the terminal.
+    print(message)
+    # # """Prints a single message to the terminal.
 
-    Args:
-        message: str - the message
-    """
-    pass
+    # # Args:
+    # #     message: str - the message
+    # # """
+    # pass
 
 
 def print_general_results(result, label):
     """Prints out any type of non-tabular data.
     It should print numbers (like "@label: @value", floats with 2 digits after the decimal),
-    lists/tuples (like "@label: \n  @item1; @item2"), and dictionaries
+    lists/tuples (like "@label: \n  @item1; @item2"), 
+    and dictionaries
     (like "@label \n  @key1: @value1; @key2: @value2")
     """
     pass
@@ -40,36 +42,53 @@ def print_general_results(result, label):
 # |   1    | Sidewinder | missile  |
 # \-----------------------------------/
 def print_table(table):
-    """Prints tabular data like above.
+    print('/------------------------------------------------------------------------------------\\')
+    for rows in table:
+        print('|', end='')
+        for column in rows:
+            print(f'{column :15}', "|", end='')
+        print('\n------------------------------------------------------------------------------------')
 
-    Args:
-        table: list of lists - the table to print out
-    """
-    pass
+
+# """Prints tabular data like above.
+
+# Args:
+#     table: list of lists - the table to print out
+# """
+# pass
 
 
 def get_input(label):
-    """Gets single string input from the user.
+    user_input = input(f"Prosze podac {label}: ")
+    return user_input
+    # """Gets single string input from the user.
 
-    Args:
-        label: str - the label before the user prompt
-    """
-    pass
+    # Args:
+    #     label: str - the label before the user prompt
+    # """
+    # pass
 
 
 def get_inputs(labels):
-    """Gets a list of string inputs from the user.
+    user_inputs = []
+    for label in labels:
+        user_inputs.append(input(f"Proszę podać {label}: "))
+    return user_inputs
 
-    Args:
-        labels: list - the list of the labels to be displayed before each prompt
-    """
-    pass
+
+# """Gets a list of string inputs from the user.
+
+# Args:
+#     labels: list - the list of the labels to be displayed before each prompt
+# """
+# pass
 
 
 def print_error_message(message):
-    """Prints an error message to the terminal.
+    print(message)
+    # """Prints an error message to the terminal.
 
-    Args:
-        message: str - the error message
-    """
-    pass
+    # Args:
+    # #     message: str - the error message
+    # # """
+    # # pass

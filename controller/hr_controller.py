@@ -1,13 +1,73 @@
-from model.hr import hr
+from model import util
+from model.hr import hr as hr
 from view import terminal as view
+import datetime
+ID = 0
+NAME = 1
+BIRTH_DAY = 2
+DEPARTAMENT = 3
+CLERANCE = 4
+
+# sends to model to open list of employees
+# sends information to view to print
 
 
 def list_employees():
-    view.print_error_message("Not implemented yet.")
+    list_of_employees = hr.get_list_of_employees()
+    view.print_table(list_of_employees)
 
 
-def add_employee():
-    view.print_error_message("Not implemented yet.")
+list_employees()
+
+
+def check_if_name_correct(name):
+    return name.replace(' ', '').isalpha()
+
+
+def check_if_date_correct(date, data_format='%Y-%m-%d'):
+    try:
+        datetime.datetime.strptime(date, data_format)
+    except:
+        return False
+    return True
+
+
+def check_if_clerance_correct(clerance, start=0, finish=7):
+    try:
+        int(clerance)
+    except:
+        return False
+    if start <= int(clerance) <= finish:
+        return True
+    else:
+        return False
+
+
+def check_if_employee_data_corect(data, partametrs_to_check=[NAME, BIRTH_DAY, CLERANCE], messeges=['imie i nazwisko', 'data urodzenia', 'poziom dostepu'], functions_list=[check_if_name_correct, check_if_date_correct, check_if_clerance_correct]):
+    for function, parametr, messege in zip(functions_list, partametrs_to_check, messeges):
+        while function(data[parametr]) == False:
+            view.print_error_message(
+                f'Podane dane " {messege} " są nie prawidłowe')
+            data[parametr] = view.get_input(messege)
+    return data
+
+
+def add_employee(employee=['imię i nazwisko', 'data urodzenia (YYYY-MM-DD)',
+                           'departament', 'poziom dostepu']):
+
+    EMPLOYEE = view.get_inputs(employee)
+    EMPLOYEE.insert(0, 'ID')
+    check_if_employee_data_corect(EMPLOYEE)
+    employee_to_add = [EMPLOYEE[NAME], EMPLOYEE[BIRTH_DAY],
+                       EMPLOYEE[DEPARTAMENT], EMPLOYEE[CLERANCE]]
+    if hr.check_if_emloyee_is_in_data(';'.join(employee_to_add)):
+        view.print_error_message(
+            'Pracownik odpowiadający tym danym już jest w bazie')
+    else:
+        EMPLOYEE[ID] = util.generate_id()
+        hr.add_emplyee_to_data(';'.join(EMPLOYEE))
+        view.print_message(
+            f'Pracownik {EMPLOYEE} został dodany do bazy danych')
 
 
 def update_employee():
