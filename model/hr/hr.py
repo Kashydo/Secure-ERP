@@ -9,6 +9,7 @@ Data table structure:
 """
 import fileinput
 import sys
+import os
 from model import data_manager, util
 
 
@@ -50,3 +51,13 @@ def update_employee_data(employee_id, edited_emplyee_data, file=DATAFILE):
         for line in fileinput.input(file, inplace=1):
             line = line.replace(employee, ';'.join(edited_emplyee_data,))
             sys.stdout.write(line)
+
+
+def remove_employee_from_data(employee_id, file=DATAFILE):
+    with open(file, 'r+') as file:
+        lines = file.readlines()
+        file.seek(0)
+        file.truncate()
+        for line in lines:
+            if not line.strip('\n').startswith(employee_id):
+                file.write(line)

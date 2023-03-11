@@ -72,7 +72,7 @@ def update_employee():
     if hr.check_if_emloyee_is_in_data(employee_id):
         employee = hr.get_data_of_employee(employee_id).split(';')
         view.print_general_results(employee, 'Pracownik')
-        updated_employee = chenging_chosen_data(employee)
+        updated_employee = chenging_chosen_data('zmienić', employee)
         view.print_general_results(employee, 'Pracownik')
         hr.update_employee_data(employee_id, updated_employee)
     else:
@@ -88,11 +88,17 @@ def chenging_chosen_data(employee_data,  messeges=['imie i nazwisko', 'data urod
     return employee_data
 
 
-update_employee()
-
-
 def delete_employee():
-    view.print_error_message("Not implemented yet.")
+    employee_id = view.get_input('ID pracownika')
+    if hr.check_if_emloyee_is_in_data(employee_id):
+        employee = hr.get_data_of_employee(employee_id).split(';')
+        view.print_general_results(employee, 'Pracownik')
+        if view.yes_no_question('usunąć', 'pracownika'):
+            hr.remove_employee_from_data(employee_id)
+            view.print_message(f'{employee[NAME]} został/a usunięty/a')
+
+
+delete_employee()
 
 
 def get_oldest_and_youngest():

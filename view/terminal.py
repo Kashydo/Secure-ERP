@@ -89,10 +89,10 @@ def get_inputs(labels):
     return user_inputs
 
 
-def yes_no_question(label):
+def yes_no_question(action, label):
     yes_no = None
     while yes_no == None:
-        user_answer = input(f'Czy chcesz zmienić {label}: [T]ak/[N]ie: ')
+        user_answer = input(f'Czy chcesz {action} {label}: [T]ak/[N]ie: ')
         if user_answer.lower() == 't':
             yes_no = 1
             return True
