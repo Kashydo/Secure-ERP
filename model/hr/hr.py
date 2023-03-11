@@ -7,8 +7,10 @@ Data table structure:
     - department (string)
     - clearance level (int): from 0 (lowest) to 7 (highest)
 """
-
+import fileinput
+import sys
 from model import data_manager, util
+
 
 DATAFILE = "model/hr/hr.csv"
 HEADERS = ["Id", "Name", "Date of birth", "Department", "Clearance"]
@@ -33,3 +35,18 @@ def get_list_of_employees(file=DATAFILE):
         employees_list = [line.strip().split(';')for line in file]
     employees_list.insert(0, HEADERS)
     return employees_list
+
+
+def get_data_of_employee(serched_data, file=DATAFILE):
+    with open(file, "r") as file:
+        for line in file:
+            if serched_data in line:
+                return line.strip()
+
+
+def update_employee_data(employee_id, edited_emplyee_data, file=DATAFILE):
+    if check_if_emloyee_is_in_data(employee_id):
+        employee = get_data_of_employee(employee_id)
+        for line in fileinput.input(file, inplace=1):
+            line = line.replace(employee, ';'.join(edited_emplyee_data,))
+            sys.stdout.write(line)

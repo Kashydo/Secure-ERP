@@ -17,9 +17,6 @@ def list_employees():
     view.print_table(list_of_employees)
 
 
-list_employees()
-
-
 def check_if_name_correct(name):
     return name.replace(' ', '').isalpha()
 
@@ -71,7 +68,27 @@ def add_employee(employee=['imię i nazwisko', 'data urodzenia (YYYY-MM-DD)',
 
 
 def update_employee():
-    view.print_error_message("Not implemented yet.")
+    employee_id = view.get_input('ID pracownika')
+    if hr.check_if_emloyee_is_in_data(employee_id):
+        employee = hr.get_data_of_employee(employee_id).split(';')
+        view.print_general_results(employee, 'Pracownik')
+        updated_employee = chenging_chosen_data(employee)
+        view.print_general_results(employee, 'Pracownik')
+        hr.update_employee_data(employee_id, updated_employee)
+    else:
+        view.print_message('Nie ma praconika o tym ID')
+
+
+def chenging_chosen_data(employee_data,  messeges=['imie i nazwisko', 'data urodzenia', 'departament', 'poziom dostepu']):
+    for employee_info, messege in zip(range(1, 5), messeges):
+        if view.yes_no_question(messege):
+            employee_data[employee_info] = view.get_input(messege)
+        else:
+            pass
+    return employee_data
+
+
+update_employee()
 
 
 def delete_employee():

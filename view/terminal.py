@@ -25,13 +25,26 @@ def print_message(message):
 
 
 def print_general_results(result, label):
-    """Prints out any type of non-tabular data.
-    It should print numbers (like "@label: @value", floats with 2 digits after the decimal),
-    lists/tuples (like "@label: \n  @item1; @item2"), 
-    and dictionaries
-    (like "@label \n  @key1: @value1; @key2: @value2")
-    """
-    pass
+    if isinstance(result, dict):
+        print(label)
+        for key, value in result:
+            print(key+':', value+'; ', end='')
+        print('')
+    elif isinstance(result, list or tuple):
+        print(label+':')
+        for value in result:
+            print(value+'; ', end='')
+        print('')
+    else:
+        print(label+':', value)
+
+    # """Prints out any type of non-tabular data.
+    # It should print numbers (like "@label: @value", floats with 2 digits after the decimal),
+    # lists/tuples (like "@label: \n  @item1; @item2"),
+    # and dictionaries
+    # (like "@label \n  @key1: @value1; @key2: @value2")
+    # """
+    # pass
 
 
 # /--------------------------------\
@@ -75,6 +88,19 @@ def get_inputs(labels):
         user_inputs.append(input(f"Proszę podać {label}: "))
     return user_inputs
 
+
+def yes_no_question(label):
+    yes_no = None
+    while yes_no == None:
+        user_answer = input(f'Czy chcesz zmienić {label}: [T]ak/[N]ie: ')
+        if user_answer.lower() == 't':
+            yes_no = 1
+            return True
+        elif user_answer.lower() == 'n':
+            yes_no = 0
+            return False
+        else:
+            print_error_message('Proszę wpisać odpowiedź [T]/[N]: ')
 
 # """Gets a list of string inputs from the user.
 
