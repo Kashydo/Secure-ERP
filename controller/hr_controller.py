@@ -113,16 +113,32 @@ def get_oldest_and_youngest():
 def get_average_age():
     employees_birthday = hr.get_employees_birthday()
     today = datetime.datetime.today()
-    avarage_age = (sum((
-        today - datetime.datetime.strptime(birthday, '%Y-%m-%d') for birthday in employees_birthday),  datetime.timedelta(0)) / len(employees_birthday)/365).days
+    sum_ages = sum((
+        today - datetime.datetime.strptime(birthday, '%Y-%m-%d') for birthday in employees_birthday),  datetime.timedelta(0))
+    avarage_age = (sum_ages / len(employees_birthday)/365).days
     view.print_general_results(avarage_age, 'Średnia wieku pracowników to')
 
 
-get_average_age()
-
-
 def next_birthdays():
-    view.print_error_message("Not implemented yet.")
+    is_date_correct = False
+    closest_birthday = {}
+    while is_date_correct == False:
+        inputed_date = view.get_input('datę (MM-DD)')
+        is_date_correct = check_if_date_correct(
+            inputed_date, data_format='%m-%d')
+    date = datetime.datetime.strptime(
+        inputed_date, '%m-%d')
+    future_date = date + datetime.timedelta(days=14)
+    employees = hr.get_names_birthday_dictionary()
+    for key in employees:
+        emplee_birthday = employees[key][5:]
+        if date <= datetime.datetime.strptime(emplee_birthday, '%m-%d') <= future_date:
+            closest_birthday[key] = emplee_birthday
+    view.print_general_results(
+        closest_birthday, 'Urodziny w ciągu 14 dni od podanej daty obchodzą')
+
+
+next_birthdays()
 
 
 def count_employees_with_clearance():
