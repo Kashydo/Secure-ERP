@@ -30,13 +30,18 @@ def print_general_results(result, label):
         for key, value in result:
             print(key+':', value+'; ', end='')
         print('')
-    elif isinstance(result, list or tuple):
+    elif isinstance(result, list):
+        print(label+':')
+        for value in result:
+            print(value+'; ', end='')
+        print('')
+    elif isinstance(result, tuple):
         print(label+':')
         for value in result:
             print(value+'; ', end='')
         print('')
     else:
-        print(label+':', value)
+        print(label+':', result)
 
     # """Prints out any type of non-tabular data.
     # It should print numbers (like "@label: @value", floats with 2 digits after the decimal),

@@ -98,15 +98,27 @@ def delete_employee():
             view.print_message(f'{employee[NAME]} został/a usunięty/a')
 
 
-delete_employee()
-
-
 def get_oldest_and_youngest():
-    view.print_error_message("Not implemented yet.")
+    employees = hr.get_names_birthday_dictionary()
+    dates = []
+    for key in employees:
+        dates.append(datetime.datetime.strptime(
+            employees[key], '%Y-%m-%d'))
+    oldest_employees = hr.who_is_oldest_youngest(employees, dates, min)
+    youngest_employees = hr.who_is_oldest_youngest(employees, dates, max)
+    view.print_general_results(oldest_employees, 'Najstarsi pracownicy to')
+    view.print_general_results(youngest_employees, 'Najmłodsi pracownicy to')
 
 
 def get_average_age():
-    view.print_error_message("Not implemented yet.")
+    employees_birthday = hr.get_employees_birthday()
+    today = datetime.datetime.today()
+    avarage_age = (sum((
+        today - datetime.datetime.strptime(birthday, '%Y-%m-%d') for birthday in employees_birthday),  datetime.timedelta(0)) / len(employees_birthday)/365).days
+    view.print_general_results(avarage_age, 'Średnia wieku pracowników to')
+
+
+get_average_age()
 
 
 def next_birthdays():
