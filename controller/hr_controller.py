@@ -99,7 +99,7 @@ def delete_employee():
 
 
 def get_oldest_and_youngest():
-    employees = hr.get_names_birthday_dictionary()
+    employees = hr.get_id_birthday_dictionary()
     dates = []
     for key in employees:
         dates.append(datetime.datetime.strptime(
@@ -119,9 +119,19 @@ def get_average_age():
     view.print_general_results(avarage_age, 'Średnia wieku pracowników to')
 
 
+def check_if_date_in_range(date, future_date):
+    employees = hr.get_id_birthday_dictionary()
+    closest_birthday = {}
+    for key in employees:
+        emplee_birthday = employees[key][5:]
+        if date <= datetime.datetime.strptime(emplee_birthday, '%m-%d') <= future_date:
+            closest_birthday[key + ' ' +
+                             hr.get_data_of_employee(key).split(';')[NAME]] = emplee_birthday
+    return closest_birthday
+
+
 def next_birthdays():
     is_date_correct = False
-    closest_birthday = {}
     while is_date_correct == False:
         inputed_date = view.get_input('datę (MM-DD)')
         is_date_correct = check_if_date_correct(
@@ -129,20 +139,22 @@ def next_birthdays():
     date = datetime.datetime.strptime(
         inputed_date, '%m-%d')
     future_date = date + datetime.timedelta(days=14)
-    employees = hr.get_names_birthday_dictionary()
-    for key in employees:
-        emplee_birthday = employees[key][5:]
-        if date <= datetime.datetime.strptime(emplee_birthday, '%m-%d') <= future_date:
-            closest_birthday[key] = emplee_birthday
-    view.print_general_results(
-        closest_birthday, 'Urodziny w ciągu 14 dni od podanej daty obchodzą')
+    closest_birthday = check_if_date_in_range(date, future_date)
+    if not closest_birthday:
+        view.print_message('Nikt nie bedzię obchodzić urodzin')
+    else:
+        view.print_general_results(
+            closest_birthday, 'Urodziny w ciągu 14 dni od podanej daty obchodzą')
 
 
 next_birthdays()
 
 
 def count_employees_with_clearance():
-    view.print_error_message("Not implemented yet.")
+    inputed_clerance = view.get_input('poziom dostępu')
+    clerance_count = hr.count_hom_many_emplyees_with_input(inputed_clerance)
+    view.print_general_results(
+        clerance_count, 'Pracowników z podanym poziomem dostępu jest')
 
 
 def count_employees_per_department():

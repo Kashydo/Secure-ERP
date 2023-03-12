@@ -68,29 +68,26 @@ def remove_employee_from_data(employee_id, file=DATAFILE):
                 file.write(line)
 
 
-def get_employees_names(file=DATAFILE):
+def get_employees_single_column_in_file(header, file=DATAFILE):
     with open(file, 'r') as file:
         employee_list = get_list_of_employees()
-        emplyees_names = [_[NAME] for _ in employee_list]
-        emplyees_names.pop(0)
-    return emplyees_names
+        emplyees_column = [_[header] for _ in employee_list]
+        emplyees_column.pop(0)
+    return emplyees_column
 
 
-def get_employees_birthday(file=DATAFILE):
-    with open(file, 'r') as file:
-        employee_list = get_list_of_employees()
-        emplyees_birthdays = [_[BIRTH_DAY] for _ in employee_list]
-        emplyees_birthdays.pop(0)
-    return emplyees_birthdays
-
-
-def get_names_birthday_dictionary():
-    employees_names = get_employees_names()
-    employees_birthday = get_employees_birthday()
-    return {employees_names[i]: employees_birthday[i] for i in range(len(employees_names))}
+def get_id_birthday_dictionary():
+    employees_id = get_employees_single_column_in_file(ID)
+    employees_birthday = get_employees_single_column_in_file(BIRTH_DAY)
+    return {employees_id[i]: employees_birthday[i] for i in range(len(employees_id))}
 
 
 def who_is_oldest_youngest(employees_dictionary, dates_list, min_max):
     year = min_max(dates_list).strftime('%Y-%m-%d')
-    return tuple(key for key,
+    return tuple(key + ' ' + get_data_of_employee(key).split(';')[NAME] for key,
                  value in employees_dictionary.items() if value == year)
+
+
+def count_hom_many_emplyees_with_input(input):
+    clerance_list = get_employees_single_column_in_file(CLERANCE)
+    return clerance_list.count(input)
