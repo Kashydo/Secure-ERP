@@ -147,18 +147,20 @@ def next_birthdays():
             closest_birthday, 'Urodziny w ciągu 14 dni od podanej daty obchodzą')
 
 
-next_birthdays()
-
-
 def count_employees_with_clearance():
     inputed_clerance = view.get_input('poziom dostępu')
     clerance_count = hr.count_hom_many_emplyees_with_input(inputed_clerance)
     view.print_general_results(
-        clerance_count, 'Pracowników z podanym poziomem dostępu jest')
+        clerance_count, 'Pracowników z co najmniej podanym poziomem dostępu jest')
 
 
 def count_employees_per_department():
-    view.print_error_message("Not implemented yet.")
+    employees_in_departaments = hr.count_employees_per_departament()
+    view.print_general_results(
+        employees_in_departaments, 'Pracownicy w działach')
+
+
+count_employees_per_department()
 
 
 def run_operation(option):

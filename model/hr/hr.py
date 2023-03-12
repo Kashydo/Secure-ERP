@@ -88,6 +88,16 @@ def who_is_oldest_youngest(employees_dictionary, dates_list, min_max):
                  value in employees_dictionary.items() if value == year)
 
 
-def count_hom_many_emplyees_with_input(input):
+def count_emplyees_with_at_least_input(input):
     clerance_list = get_employees_single_column_in_file(CLERANCE)
-    return clerance_list.count(input)
+    return sum(int(i) >= int(input) for i in clerance_list)
+
+
+def count_employees_per_departament():
+    employees_in_each_depatament = {}
+    departaments_list = get_employees_single_column_in_file(DEPARTAMENT)
+    for departament in departaments_list:
+        if departament not in employees_in_each_depatament.keys():
+            employees_in_each_depatament[departament] = departaments_list.count(
+                departament)
+    return employees_in_each_depatament

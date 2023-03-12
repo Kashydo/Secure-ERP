@@ -28,7 +28,7 @@ def print_general_results(result, label):
     if isinstance(result, dict):
         print(label)
         for key in result:
-            print(key+':', result[key]+'; ', end='')
+            print(str(key)+':', str(result[key])+'; ', end='')
         print('')
     elif isinstance(result, list):
         print(label+':')
