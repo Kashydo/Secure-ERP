@@ -13,6 +13,7 @@ CLERANCE = 4
 
 
 def list_employees():
+    view.clear()
     list_of_employees = hr.get_list_of_employees()
     view.print_table(list_of_employees)
 
@@ -72,7 +73,7 @@ def update_employee():
     if hr.check_if_emloyee_is_in_data(employee_id):
         employee = hr.get_data_of_employee(employee_id).split(';')
         view.print_general_results(employee, 'Pracownik')
-        updated_employee = chenging_chosen_data('zmienić', employee)
+        updated_employee = chenging_chosen_data(employee)
         view.print_general_results(employee, 'Pracownik')
         hr.update_employee_data(employee_id, updated_employee)
     else:
@@ -81,7 +82,7 @@ def update_employee():
 
 def chenging_chosen_data(employee_data,  messeges=['imie i nazwisko', 'data urodzenia', 'departament', 'poziom dostepu']):
     for employee_info, messege in zip(range(1, 5), messeges):
-        if view.yes_no_question(messege):
+        if view.yes_no_question('zmienić', messege):
             employee_data[employee_info] = view.get_input(messege)
         else:
             pass
@@ -111,7 +112,7 @@ def get_oldest_and_youngest():
 
 
 def get_average_age():
-    employees_birthday = hr.get_employees_birthday()
+    employees_birthday = hr.get_employees_single_column_in_file(BIRTH_DAY)
     today = datetime.datetime.today()
     sum_ages = sum((
         today - datetime.datetime.strptime(birthday, '%Y-%m-%d') for birthday in employees_birthday),  datetime.timedelta(0))
@@ -149,7 +150,7 @@ def next_birthdays():
 
 def count_employees_with_clearance():
     inputed_clerance = view.get_input('poziom dostępu')
-    clerance_count = hr.count_hom_many_emplyees_with_input(inputed_clerance)
+    clerance_count = hr.count_emplyees_with_at_least_input(inputed_clerance)
     view.print_general_results(
         clerance_count, 'Pracowników z co najmniej podanym poziomem dostępu jest')
 
@@ -158,9 +159,6 @@ def count_employees_per_department():
     employees_in_departaments = hr.count_employees_per_departament()
     view.print_general_results(
         employees_in_departaments, 'Pracownicy w działach')
-
-
-count_employees_per_department()
 
 
 def run_operation(option):

@@ -24,8 +24,9 @@ CLERANCE = 4
 
 def add_emplyee_to_data(employee_data, file=DATAFILE):
     with open(file, "a+") as file:
-        file.write(employee_data)
+        file.seek(0)
         file.write('\n')
+        file.write(employee_data)
 
 
 def check_if_emloyee_is_in_data(employee_data, file=DATAFILE):
