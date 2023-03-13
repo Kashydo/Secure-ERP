@@ -62,14 +62,12 @@ def print_table(table):
 
 
 def get_input(label):
-    clear()
     user_input = input(f"Prosze podac {label}: ")
     print('')
     return user_input
 
 
 def get_inputs(labels):
-    clear()
     user_inputs = []
     print('')
     for label in labels:

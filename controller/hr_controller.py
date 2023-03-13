@@ -145,9 +145,14 @@ def get_average_age():
 def check_if_date_in_range(date, future_date):
     employees = hr.get_id_birthday_dictionary()
     closest_birthday = {}
+    end_year = datetime.datetime.strptime('12-31', '%m-%d')
     for key in employees:
         emplee_birthday = employees[key][5:]
-        if date <= datetime.datetime.strptime(emplee_birthday, '%m-%d') <= future_date:
+        emplee_birthday = datetime.datetime.strptime(emplee_birthday, '%m-%d')
+        if date <= emplee_birthday <= future_date:
+            closest_birthday[key + ' ' +
+                             hr.get_data_of_employee(key).split(';')[NAME]] = emplee_birthday
+        elif date <= emplee_birthday.replace(year=1901) <= future_date:
             closest_birthday[key + ' ' +
                              hr.get_data_of_employee(key).split(';')[NAME]] = emplee_birthday
     return closest_birthday
@@ -161,13 +166,15 @@ def next_birthdays():
             inputed_date, data_format='%m-%d')
     date = datetime.datetime.strptime(
         inputed_date, '%m-%d')
-    future_date = date + datetime.timedelta(days=14)
+    days_range = 14
+    future_date = date + datetime.timedelta(days=days_range)
     closest_birthday = check_if_date_in_range(date, future_date)
     if not closest_birthday:
-        view.print_message('Nikt nie bedzię obchodzić urodzin')
+        view.print_message(
+            f'Nikt nie bedzię obchodzić urodzin w ciągu {days_range}')
     else:
         view.print_general_results(
-            closest_birthday, 'Urodziny w ciągu 14 dni od podanej daty obchodzą')
+            closest_birthday, f'Urodziny w ciągu {days_range} od podanej daty obchodzą')
 
 
 def count_employees_with_clearance():
