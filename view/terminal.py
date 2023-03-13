@@ -16,11 +16,15 @@ def print_menu(title, list_options):
 
 
 def print_message(message):
+    clear()
     print(message)
+    print('')
     input("Press Enter to continue...")
+    print('')
 
 
 def print_general_results(result, label):
+    clear()
     if isinstance(result, dict):
         print(label)
         for key in result:
@@ -38,11 +42,13 @@ def print_general_results(result, label):
         print('')
     else:
         print(label+':', result)
+    print('')
     input("Press Enter to continue...")
+    print('')
 
 
 def print_table(table):
-    lenght = max(table, key=len)
+    clear()
     for rows in table:
         print(
             ' -------------------------------------------------------------------------------')
@@ -50,25 +56,32 @@ def print_table(table):
             print(f'|{(column) :15}', end='')
         print('|')
     print('-------------------------------------------------------------------------------')
-
+    print('')
     input("Press Enter to continue...")
+    print('')
 
 
 def get_input(label):
+    clear()
     user_input = input(f"Prosze podac {label}: ")
+    print('')
     return user_input
 
 
 def get_inputs(labels):
+    clear()
     user_inputs = []
+    print('')
     for label in labels:
         user_inputs.append(input(f"Proszę podać {label}: "))
+    print('')
     return user_inputs
 
 
 def yes_no_question(action, label):
     yes_no = None
     while yes_no == None:
+        print('')
         user_answer = input(f'Czy chcesz {action} {label}: [T]ak/[N]ie: ')
         if user_answer.lower() == 't':
             yes_no = 1
@@ -78,8 +91,11 @@ def yes_no_question(action, label):
             return False
         else:
             print_error_message('Proszę wpisać odpowiedź [T]/[N]: ')
+        print('')
 
 
 def print_error_message(message):
     print(message)
+    print('')
     input("Press Enter to continue...")
+    print('')

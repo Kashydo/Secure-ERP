@@ -22,6 +22,11 @@ DEPARTAMENT = 3
 CLERANCE = 4
 
 
+def create_new_file(data, file):
+    with open(file, "a+") as file:
+        file.write(data)
+
+
 def add_emplyee_to_data(employee_data, file=DATAFILE):
     with open(file, "a+") as file:
         file.seek(0)

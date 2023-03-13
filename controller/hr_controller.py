@@ -50,22 +50,44 @@ def check_if_employee_data_corect(data, partametrs_to_check=[NAME, BIRTH_DAY, CL
     return data
 
 
+def check_for_employee_before_adding(employee_to_add):
+    employee_is_in_data = False
+    if hr.check_if_emloyee_is_in_data(';'.join(employee_to_add)):
+        view.print_error_message(
+            'Pracownik odpowiadający tym danym już jest w bazie')
+        if view.yes_no_question('dodać', 'pracownika') == False:
+            view.print_message('Pracownik nie został dodany')
+            employee_is_in_data = True
+    return employee_is_in_data
+
+
+def check_for_file_before_adding(EMPLOYEE):
+    try:
+        hr.add_emplyee_to_data(';'.join(EMPLOYEE))
+        view.print_message(
+            f'Pracownik {EMPLOYEE} został dodany do bazy danych')
+        employee_is_in_data = True
+    except FileNotFoundError:
+        view.print_error_message('Nie znaleziono pliku model/hr/hr.csv')
+        if view.yes_no_question('założyć', 'plik'):
+            hr.create_new_file(';'.join(EMPLOYEE))
+            view.print_message(
+                f'Pracownik {EMPLOYEE} został dodany do bazy danych')
+        employee_is_in_data = True
+    return employee_is_in_data
+
+
 def add_employee(employee=['imię i nazwisko', 'data urodzenia (YYYY-MM-DD)',
                            'departament', 'poziom dostepu']):
-
     EMPLOYEE = view.get_inputs(employee)
     EMPLOYEE.insert(0, 'ID')
     check_if_employee_data_corect(EMPLOYEE)
     employee_to_add = [EMPLOYEE[NAME], EMPLOYEE[BIRTH_DAY],
                        EMPLOYEE[DEPARTAMENT], EMPLOYEE[CLERANCE]]
-    if hr.check_if_emloyee_is_in_data(';'.join(employee_to_add)):
-        view.print_error_message(
-            'Pracownik odpowiadający tym danym już jest w bazie')
-    else:
+    employee_is_in_data = check_for_employee_before_adding(employee_to_add)
+    while employee_is_in_data == False:
         EMPLOYEE[ID] = util.generate_id()
-        hr.add_emplyee_to_data(';'.join(EMPLOYEE))
-        view.print_message(
-            f'Pracownik {EMPLOYEE} został dodany do bazy danych')
+        employee_is_in_data = check_for_file_before_adding(EMPLOYEE)
 
 
 def update_employee():
