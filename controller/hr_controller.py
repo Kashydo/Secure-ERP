@@ -8,9 +8,6 @@ BIRTH_DAY = 2
 DEPARTAMENT = 3
 CLERANCE = 4
 
-# sends to model to open list of employees
-# sends information to view to print
-
 
 def list_employees():
     view.clear()
@@ -36,6 +33,13 @@ def check_if_clerance_correct(clerance, start=0, finish=7):
     except:
         return False
     if start <= int(clerance) <= finish:
+        return True
+    else:
+        return False
+
+
+def check_if_id_correct(employee_id, id_lenght=10):
+    if len(employee_id) == id_lenght:
         return True
     else:
         return False
@@ -92,14 +96,17 @@ def add_employee(employee=['imię i nazwisko', 'data urodzenia (YYYY-MM-DD)',
 
 def update_employee():
     employee_id = view.get_input('ID pracownika')
-    if hr.check_if_emloyee_is_in_data(employee_id):
-        employee = hr.get_data_of_employee(employee_id).split(';')
-        view.print_general_results(employee, 'Pracownik')
-        updated_employee = chenging_chosen_data(employee)
-        view.print_general_results(employee, 'Pracownik')
-        hr.update_employee_data(employee_id, updated_employee)
+    if check_if_id_correct(employee_id):
+        if hr.check_if_emloyee_is_in_data(employee_id):
+            employee = hr.get_data_of_employee(employee_id)
+            view.print_general_results(employee, 'Pracownik')
+            updated_employee = chenging_chosen_data(employee)
+            view.print_general_results(employee, 'Pracownik')
+            hr.update_employee_data(employee_id, updated_employee)
+        else:
+            view.print_message('Nie ma praconika o tym ID')
     else:
-        view.print_message('Nie ma praconika o tym ID')
+        view.print_message('Nieprawidłowe ID')
 
 
 def chenging_chosen_data(employee_data,  messeges=['imie i nazwisko', 'data urodzenia', 'departament', 'poziom dostepu']):
@@ -114,7 +121,7 @@ def chenging_chosen_data(employee_data,  messeges=['imie i nazwisko', 'data urod
 def delete_employee():
     employee_id = view.get_input('ID pracownika')
     if hr.check_if_emloyee_is_in_data(employee_id):
-        employee = hr.get_data_of_employee(employee_id).split(';')
+        employee = hr.get_data_of_employee(employee_id)
         view.print_general_results(employee, 'Pracownik')
         if view.yes_no_question('usunąć', 'pracownika'):
             hr.remove_employee_from_data(employee_id)
@@ -145,16 +152,15 @@ def get_average_age():
 def check_if_date_in_range(date, future_date):
     employees = hr.get_id_birthday_dictionary()
     closest_birthday = {}
-    end_year = datetime.datetime.strptime('12-31', '%m-%d')
     for key in employees:
         emplee_birthday = employees[key][5:]
         emplee_birthday = datetime.datetime.strptime(emplee_birthday, '%m-%d')
         if date <= emplee_birthday <= future_date:
             closest_birthday[key + ' ' +
-                             hr.get_data_of_employee(key).split(';')[NAME]] = emplee_birthday
+                             hr.get_data_of_employee(key)[NAME]] = hr.get_data_of_employee(key)[BIRTH_DAY]
         elif date <= emplee_birthday.replace(year=1901) <= future_date:
             closest_birthday[key + ' ' +
-                             hr.get_data_of_employee(key).split(';')[NAME]] = emplee_birthday
+                             hr.get_data_of_employee(key)[NAME]] = hr.get_data_of_employee(key)[BIRTH_DAY]
     return closest_birthday
 
 
