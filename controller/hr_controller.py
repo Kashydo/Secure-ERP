@@ -10,7 +10,7 @@ CLERANCE = 4
 
 
 def list_employees():
-    view.clear()
+    view.clear(0)
     list_of_employees = hr.get_list_of_employees()
     view.print_table(list_of_employees)
 

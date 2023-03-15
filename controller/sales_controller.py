@@ -1,37 +1,56 @@
-from model.sales import sales
+from model.sales import sales as sales
 from view import terminal as view
 
 
 def list_transactions():
-    view.print_error_message("Not implemented yet.")
+    result = sales.list_data()
+    view.print_table(result)
 
 
 def add_transaction():
-    view.print_error_message("Not implemented yet.")
+    data = view.get_inputs(["Product", "Price", "Date"])
+    sales.add_customer(data)
 
 
 def update_transaction():
-    view.print_error_message("Not implemented yet.")
+    id = view.get_input("ID")
+    check, line_number = sales.check_id(id)
+    if check is True:
+        data = view.get_inputs(["Product", "Price", "Date"])
+        sales.update_data(data, line_number)
+    else:
+        view.print_error_message("This ID is not existing!")
 
 
 def delete_transaction():
-    view.print_error_message("Not implemented yet.")
+    id = view.get_input("ID")
+    check, line_number = sales.check_id(id)
+    if check is True:
+        sales.delete_data(line_number)
+    else:
+        view.print_error_message("This ID is not existing!")
 
 
 def get_biggest_revenue_transaction():
-    view.print_error_message("Not implemented yet.")
+    biggest = sales.biggest_revenue_id()
+    view.print_general_results(biggest, "Biggest revenue transaction")
 
 
 def get_biggest_revenue_product():
-    view.print_error_message("Not implemented yet.")
+    product = sales.biggest_revenue_name()
+    view.print_general_results(product, "Biggest revenue product")
 
 
 def count_transactions_between():
-    view.print_error_message("Not implemented yet.")
+    dates = view.get_inputs(["Starting date", "Ending date"])
+    counter = sales.count_transactions(dates)
+    view.print_general_results(counter, "Number of transactions between dates")
 
 
 def sum_transactions_between():
-    view.print_error_message("Not implemented yet.")
+    dates = view.get_inputs(["Starting date", "Ending date"])
+    sum_price = sales.count_transaction_sum(dates)
+    view.print_general_results(sum_price, "Sum of transactions between dates")
 
 
 def run_operation(option):
@@ -71,7 +90,7 @@ def display_menu():
 
 
 def menu():
-    operation = None
+    operation = '1'
     while operation != '0':
         display_menu()
         try:
