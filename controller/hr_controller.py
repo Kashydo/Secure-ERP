@@ -8,16 +8,11 @@ BIRTH_DAY = 2
 DEPARTAMENT = 3
 CLERANCE = 4
 
-# sends to model to open list of employees
-# sends information to view to print
-
 
 def list_employees():
+    view.clear()
     list_of_employees = hr.get_list_of_employees()
     view.print_table(list_of_employees)
-
-
-list_employees()
 
 
 def check_if_name_correct(name):
@@ -43,6 +38,13 @@ def check_if_clerance_correct(clerance, start=0, finish=7):
         return False
 
 
+def check_if_id_correct(employee_id, id_lenght=10):
+    if len(employee_id) == id_lenght:
+        return True
+    else:
+        return False
+
+
 def check_if_employee_data_corect(data, partametrs_to_check=[NAME, BIRTH_DAY, CLERANCE], messeges=['imie i nazwisko', 'data urodzenia', 'poziom dostepu'], functions_list=[check_if_name_correct, check_if_date_correct, check_if_clerance_correct]):
     for function, parametr, messege in zip(functions_list, partametrs_to_check, messeges):
         while function(data[parametr]) == False:
@@ -52,50 +54,146 @@ def check_if_employee_data_corect(data, partametrs_to_check=[NAME, BIRTH_DAY, CL
     return data
 
 
+def check_for_employee_before_adding(employee_to_add):
+    employee_is_in_data = False
+    if hr.check_if_emloyee_is_in_data(';'.join(employee_to_add)):
+        view.print_error_message(
+            'Pracownik odpowiadający tym danym już jest w bazie')
+        if view.yes_no_question('dodać', 'pracownika') == False:
+            view.print_message('Pracownik nie został dodany')
+            employee_is_in_data = True
+    return employee_is_in_data
+
+
+def check_for_file_before_adding(EMPLOYEE):
+    try:
+        hr.add_emplyee_to_data(';'.join(EMPLOYEE))
+        view.print_message(
+            f'Pracownik {EMPLOYEE} został dodany do bazy danych')
+        employee_is_in_data = True
+    except FileNotFoundError:
+        view.print_error_message('Nie znaleziono pliku model/hr/hr.csv')
+        if view.yes_no_question('założyć', 'plik'):
+            hr.create_new_file(';'.join(EMPLOYEE))
+            view.print_message(
+                f'Pracownik {EMPLOYEE} został dodany do bazy danych')
+        employee_is_in_data = True
+    return employee_is_in_data
+
+
 def add_employee(employee=['imię i nazwisko', 'data urodzenia (YYYY-MM-DD)',
                            'departament', 'poziom dostepu']):
-
     EMPLOYEE = view.get_inputs(employee)
     EMPLOYEE.insert(0, 'ID')
     check_if_employee_data_corect(EMPLOYEE)
     employee_to_add = [EMPLOYEE[NAME], EMPLOYEE[BIRTH_DAY],
                        EMPLOYEE[DEPARTAMENT], EMPLOYEE[CLERANCE]]
-    if hr.check_if_emloyee_is_in_data(';'.join(employee_to_add)):
-        view.print_error_message(
-            'Pracownik odpowiadający tym danym już jest w bazie')
-    else:
+    employee_is_in_data = check_for_employee_before_adding(employee_to_add)
+    while employee_is_in_data == False:
         EMPLOYEE[ID] = util.generate_id()
-        hr.add_emplyee_to_data(';'.join(EMPLOYEE))
-        view.print_message(
-            f'Pracownik {EMPLOYEE} został dodany do bazy danych')
+        employee_is_in_data = check_for_file_before_adding(EMPLOYEE)
 
 
 def update_employee():
-    view.print_error_message("Not implemented yet.")
+    employee_id = view.get_input('ID pracownika')
+    if check_if_id_correct(employee_id):
+        if hr.check_if_emloyee_is_in_data(employee_id):
+            employee = hr.get_data_of_employee(employee_id)
+            view.print_general_results(employee, 'Pracownik')
+            updated_employee = chenging_chosen_data(employee)
+            view.print_general_results(employee, 'Pracownik')
+            hr.update_employee_data(employee_id, updated_employee)
+        else:
+            view.print_message('Nie ma praconika o tym ID')
+    else:
+        view.print_message('Nieprawidłowe ID')
+
+
+def chenging_chosen_data(employee_data,  messeges=['imie i nazwisko', 'data urodzenia', 'departament', 'poziom dostepu']):
+    for employee_info, messege in zip(range(1, 5), messeges):
+        if view.yes_no_question('zmienić', messege):
+            employee_data[employee_info] = view.get_input(messege)
+        else:
+            pass
+    return employee_data
 
 
 def delete_employee():
-    view.print_error_message("Not implemented yet.")
+    employee_id = view.get_input('ID pracownika')
+    if hr.check_if_emloyee_is_in_data(employee_id):
+        employee = hr.get_data_of_employee(employee_id)
+        view.print_general_results(employee, 'Pracownik')
+        if view.yes_no_question('usunąć', 'pracownika'):
+            hr.remove_employee_from_data(employee_id)
+            view.print_message(f'{employee[NAME]} został/a usunięty/a')
 
 
 def get_oldest_and_youngest():
-    view.print_error_message("Not implemented yet.")
+    employees = hr.get_id_birthday_dictionary()
+    dates = []
+    for key in employees:
+        dates.append(datetime.datetime.strptime(
+            employees[key], '%Y-%m-%d'))
+    oldest_employees = hr.who_is_oldest_youngest(employees, dates, min)
+    youngest_employees = hr.who_is_oldest_youngest(employees, dates, max)
+    view.print_general_results(oldest_employees, 'Najstarsi pracownicy to')
+    view.print_general_results(youngest_employees, 'Najmłodsi pracownicy to')
 
 
 def get_average_age():
-    view.print_error_message("Not implemented yet.")
+    employees_birthday = hr.get_employees_single_column_in_file(BIRTH_DAY)
+    today = datetime.datetime.today()
+    sum_ages = sum((
+        today - datetime.datetime.strptime(birthday, '%Y-%m-%d') for birthday in employees_birthday),  datetime.timedelta(0))
+    avarage_age = (sum_ages / len(employees_birthday)/365).days
+    view.print_general_results(avarage_age, 'Średnia wieku pracowników to')
+
+
+def check_if_date_in_range(date, future_date):
+    employees = hr.get_id_birthday_dictionary()
+    closest_birthday = {}
+    for key in employees:
+        emplee_birthday = employees[key][5:]
+        emplee_birthday = datetime.datetime.strptime(emplee_birthday, '%m-%d')
+        if date <= emplee_birthday <= future_date:
+            closest_birthday[key + ' ' +
+                             hr.get_data_of_employee(key)[NAME]] = hr.get_data_of_employee(key)[BIRTH_DAY]
+        elif date <= emplee_birthday.replace(year=1901) <= future_date:
+            closest_birthday[key + ' ' +
+                             hr.get_data_of_employee(key)[NAME]] = hr.get_data_of_employee(key)[BIRTH_DAY]
+    return closest_birthday
 
 
 def next_birthdays():
-    view.print_error_message("Not implemented yet.")
+    is_date_correct = False
+    while is_date_correct == False:
+        inputed_date = view.get_input('datę (MM-DD)')
+        is_date_correct = check_if_date_correct(
+            inputed_date, data_format='%m-%d')
+    date = datetime.datetime.strptime(
+        inputed_date, '%m-%d')
+    days_range = 14
+    future_date = date + datetime.timedelta(days=days_range)
+    closest_birthday = check_if_date_in_range(date, future_date)
+    if not closest_birthday:
+        view.print_message(
+            f'Nikt nie bedzię obchodzić urodzin w ciągu {days_range}')
+    else:
+        view.print_general_results(
+            closest_birthday, f'Urodziny w ciągu {days_range} od podanej daty obchodzą')
 
 
 def count_employees_with_clearance():
-    view.print_error_message("Not implemented yet.")
+    inputed_clerance = view.get_input('poziom dostępu')
+    clerance_count = hr.count_emplyees_with_at_least_input(inputed_clerance)
+    view.print_general_results(
+        clerance_count, 'Pracowników z co najmniej podanym poziomem dostępu jest')
 
 
 def count_employees_per_department():
-    view.print_error_message("Not implemented yet.")
+    employees_in_departaments = hr.count_employees_per_departament()
+    view.print_general_results(
+        employees_in_departaments, 'Pracownicy w działach')
 
 
 def run_operation(option):
